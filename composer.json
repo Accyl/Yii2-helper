@@ -1,0 +1,31 @@
+{
+  "name": "Accyl/yii2-helpers",
+  "description": "扩展了yii2框架本身的一些helper，以及自己添加的一些helpers",
+  "keywords": [
+    "yii2",
+    "extension",
+    "helper"
+  ],
+  "homepage": "https://github.com/Accyl/Yii2-helpers",
+  "type": "yii2-extension",
+  "license": "BSD-3-Clause",
+  "author": [
+    {
+      "name": "Luna",
+      "email": "Luna@cyl-mail.com"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/Accyl/Yii2-helpers/issues",
+    "source": "https://github.com/Accyl/Yii2-helpers"
+  },
+  "minimum-stability": "stable",
+  "require": {
+    "yiisoft/yii2": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Accyl\\helpers\\": ""
+    }
+  }
+}
