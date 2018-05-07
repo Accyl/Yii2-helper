@@ -168,7 +168,7 @@ class ArrayHelper extends \yii\helpers\ArrayHelper
      * 对数组数据进行清理
      * 该方法对于简单类会直接转换为数组.
      *
-     * @param array $data
+     * @param array           $data
      * @param string|callable $callback
      *
      * @throws \Exception

@@ -77,7 +77,7 @@ class StringHelper extends \yii\helpers\StringHelper
 
         $i = 0;
         while ($i < $length - mb_strlen($prefix)) {
-            $index = random_int(0, \strlen($candidates) - 1);
+            $index = random_int(0, \mb_strlen($candidates) - 1);
             $randomString .= $candidates[$index];
             ++$i;
         }
@@ -97,7 +97,7 @@ class StringHelper extends \yii\helpers\StringHelper
     {
         $candidates = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
-        $randomString = substr(str_shuffle($candidates), 0, $length > \strlen($candidates) ? \strlen($candidates) : $length);
+        $randomString = substr(str_shuffle($candidates), 0, $length > \mb_strlen($candidates) ? \mb_strlen($candidates) : $length);
 
         return $prefix.$randomString;
     }
@@ -109,7 +109,7 @@ class StringHelper extends \yii\helpers\StringHelper
      */
     public static function generateUniqueId(): string
     {
-        return md5(uniqid(static::generateSimpleRandomString(6), true));
+        return md5(uniqid(static::generateSimpleRandomString(6), true).static::generateSimpleRandomString(6));
     }
 
     /**

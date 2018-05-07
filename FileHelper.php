@@ -60,9 +60,9 @@ class FileHelper extends \yii\helpers\FileHelper
      *
      * @throws \Exception
      *
-     * @return bool|string
+     * @return string
      */
-    public static function saveUploadFileByName(string $name, string $savePath, bool $onlyImage = false)
+    public static function saveUploadFileByName(string $name, string $savePath, bool $onlyImage = false): string
     {
         if (!$instance = UploadedFile::getInstanceByName($name)) {
             \Yii::error(['上传文件失败，找不到指定的文件名称', $name]);
@@ -228,13 +228,14 @@ class FileHelper extends \yii\helpers\FileHelper
      *
      * @param string $image 图片地址
      * @param bool   $abs   是否获取绝对路径
+     * @param string $host  资源服务器Host
      *
      * @return string
      */
-    public static function getImageUrl(string $image, bool $abs = true): string
+    public static function getImageUrl(string $image, bool $abs = true, $host = ''): string
     {
-        if ($abs) {
-            return 0 === strncmp($image, 'https://', 8) || 0 === strncmp($image, 'http://', 7) ? $image : \Yii::$app->params['image-host-address'].$image;
+        if ($abs && $host) {
+            return 0 === strncmp($image, 'https://', 8) || 0 === strncmp($image, 'http://', 7) ? $image : $host.$image;
         }
 
         if (0 === strncmp($image, 'https://', 8) || 0 === strncmp($image, 'http://', 7)) {
@@ -252,7 +253,7 @@ class FileHelper extends \yii\helpers\FileHelper
     /**
      * @return string
      */
-    private static function getUploadFileRootPath(): string
+    protected static function getUploadFileRootPath(): string
     {
         return self::getWebRootPath().(\Yii::$app->params['upload-dir'] ?? 'uploads');
     }
