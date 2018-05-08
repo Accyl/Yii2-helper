@@ -1,0 +1,16 @@
+namespace: Accyl\helpers\tests
+
+suites:
+    unit:
+        path: .
+
+settings:
+    shuffle: true
+    lint: true
+    bootstrap: ../vendor/autoload.php
+paths:
+    tests: tests
+    output: tests/_output
+    support: tests/_support
+    data: tests
+     

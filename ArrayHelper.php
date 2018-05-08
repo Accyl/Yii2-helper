@@ -14,17 +14,19 @@ class ArrayHelper extends \yii\helpers\ArrayHelper
     /**
      * 将对象解析为数组并且对值进行转换.
      *
-     * @param mixed $object
-     * @param bool  $hideIdentity
+     * @param mixed  $data         需要处理的数据，可以是继承了Arrayable接口的对象的实例或stdClass的实例以及数组
+     * @param string $default      需要被处理的默认值
+     * @param bool   $hideIdentity 是否对身份数据进行隐藏处理
+     * @param array  $identities   属于身份信息的key的列表
      *
-     * @return array
+     * @return array 处理后的数据
      */
-    public static function decode($object, bool $hideIdentity = true): array
+    public static function decode($data, $default = 'n/a', bool $hideIdentity = true, array $identities = ['mobile', 'email']): array
     {
-        if ($object instanceof Arrayable) {
-            $result = $object->toArray();
+        if ($data instanceof Arrayable) {
+            $result = $data->toArray();
         } else {
-            $result = (array) $object;
+            $result = (array) $data;
         }
 
         foreach ($result as $key => $value) {
@@ -34,11 +36,11 @@ class ArrayHelper extends \yii\helpers\ArrayHelper
                 continue;
             }
 
-            if (\is_string($value) && 'n/a' === trim($value)) {
+            if (\is_string($value) && $default === trim($value)) {
                 $value = '';
             }
 
-            if ($hideIdentity && \in_array($key, ['mobile', 'email'], true)) {
+            if ($hideIdentity && \in_array($key, $identities, true)) {
                 $value = StringHelper::hideIdentity($value);
             }
 
@@ -102,7 +104,11 @@ class ArrayHelper extends \yii\helpers\ArrayHelper
                     throw new \InvalidArgumentException('找不到索引：'.$subKey);
                 }
 
-                $result[$subKey] = static::extract($data[$subKey], [implode('.', $subKeys)]);
+                try {
+                    $result[$subKey] = static::merge($result[$subKey] ?? [], static::extract($data[$subKey], [implode('.', $subKeys)]));
+                } catch (\InvalidArgumentException $exception) {
+                    throw new \InvalidArgumentException('找不到索引：'.$value);
+                }
 
                 continue;
             }
@@ -170,12 +176,13 @@ class ArrayHelper extends \yii\helpers\ArrayHelper
      *
      * @param array           $data
      * @param string|callable $callback
+     * @param string          $chars
      *
      * @throws \Exception
      *
      * @return array
      */
-    public static function trim(array $data, $callback = 'trim'): array
+    public static function trim(array $data, $callback = 'trim', $chars = " \t\n\r\0\x0B"): array
     {
         foreach ($data as $key => $item) {
             if (empty($item)) {
@@ -187,7 +194,7 @@ class ArrayHelper extends \yii\helpers\ArrayHelper
                     throw new \InvalidArgumentException('找不到指定的方法：'.$callback);
                 }
 
-                $data[$key] = call_user_func_array($callback, [$item]);
+                $data[$key] = call_user_func_array($callback, [$item, $chars]);
             } elseif (\is_array($item) || $item instanceof \stdClass) {
                 $data[$key] = static::trim((array) $item);
             } else {
