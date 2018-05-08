@@ -73,6 +73,10 @@ class StringHelper extends \yii\helpers\StringHelper
      */
     public static function generateRandomString(int $length = 8, string $prefix = '', string $candidates = 'abcdefghijklmnopqrstuvwxyz0123456789'): string
     {
+        if (empty($candidates)) {
+            throw new \InvalidArgumentException('随机因子不能为空');
+        }
+
         $randomString = '';
 
         $i = 0;
