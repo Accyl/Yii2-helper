@@ -191,10 +191,39 @@ class ArrayHelperTest extends \Codeception\Test\Unit
      * @throws \Exception
      *
      * @dataProvider trimDataProvider
+     * @group trim
      */
     public function testTrimByDefaultBehavior($actual, $expected, $callback, $chars)
     {
         $this->assertEquals($expected, ArrayHelper::trim($actual, $callback, $chars), '测试失败');
+    }
+
+    /**
+     * 测试trim方法的异常行为1.
+     *
+     * @throws \Exception
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage 找不到指定的方法：aaabbc
+     * @group trim
+     */
+    public function testTrimByExceptionBehavior1()
+    {
+        ArrayHelper::trim(['a'], 'aaabbc');
+    }
+
+    /**
+     * 测试trim方法的异常行为2.
+     *
+     * @throws \Exception
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage 错误的数据格式:object
+     * @group trim
+     */
+    public function testTrimByExceptionBehavior2()
+    {
+        ArrayHelper::trim([new \Exception()]);
     }
 
     /**
@@ -205,6 +234,7 @@ class ArrayHelperTest extends \Codeception\Test\Unit
     public function trimDataProvider()
     {
         return [
+            '一维数组-empty-trim' => [[], [], 'trim', " \t\n\r\0\x0B"],
             '一维数组-trim' => [['1 ', ' 2 ', "3\n"], ['1', '2', '3'], 'trim', " \t\n\r\0\x0B"],
             '一维数组-ltrim' => [['1 ', ' 2 ', "3\n"], ['1 ', '2 ', "3\n"], 'ltrim', " \t\n\r\0\x0B"],
             '一维数组-rtrim' => [['1 ', ' 2 ', "3\n"], ['1', ' 2', '3'], 'rtrim', " \t\n\r\0\x0B"],
