@@ -159,7 +159,7 @@ class FileHelper extends \yii\helpers\FileHelper
         }
 
         foreach ($instances as $instance) {
-            $file = $savePath.DIRECTORY_SEPARATOR.md5(time().StringHelper::generateUniqueId()).'.'.static::getExtensionByMimeType($instance->type);
+            $file = $savePath.DIRECTORY_SEPARATOR.StringHelper::generateUniqueId().'.'.static::getExtensionByMimeType($instance->type);
 
             if (!$instance->saveAs(self::getWebRootPath().$file)) {
                 \Yii::error(['保存文件失败', $instance->error], __METHOD__);

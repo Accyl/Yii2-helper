@@ -92,10 +92,10 @@ class StringHelper extends \yii\helpers\StringHelper
     /**
      * 生成一个简单字符串.
      *
-     * @param int    $length 字符串长度，最大不超过62位
+     * @param int    $length 字符串长度，最大不超过62位，该长度不计算前缀的长度
      * @param string $prefix 字符串前缀
      *
-     * @return string
+     * @return string 返回的字符串总长度为$prefix的长度加上$length的值
      */
     public static function generateSimpleRandomString(int $length = 8, string $prefix = ''): string
     {

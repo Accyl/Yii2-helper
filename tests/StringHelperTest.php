@@ -56,6 +56,49 @@ class StringHelperTest extends \Codeception\Test\Unit
         StringHelper::generateRandomString(8, '', '');
     }
 
+    /**
+     * 测试generateSimpleRandomString方法的默认行为.
+     */
+    public function testGenerateSimpleRandomStringByDefaultBehavior()
+    {
+        $this->assertEquals(8, mb_strlen(StringHelper::generateSimpleRandomString()), '测试失败：默认长度应该为8');
+
+        $this->assertEquals(10, mb_strlen(StringHelper::generateSimpleRandomString(10)), '测试失败：总长度应该为10');
+
+        $this->assertEquals(62, mb_strlen(StringHelper::generateSimpleRandomString(80)), '测试失败：总长度应该为62');
+
+        $this->assertEquals(17, mb_strlen(StringHelper::generateSimpleRandomString(10, 'prefix_')), '测试失败：总长度应该为17');
+
+        $this->assertTrue(0 === strncmp('prefix_', StringHelper::generateSimpleRandomString(3, 'prefix_'), 7), '测试失败：应该以前缀开头');
+    }
+
+    /**
+     * 测试generateUniqueId方法.
+     */
+    public function testGenerateUniqueId()
+    {
+        $except = [];
+
+        for ($i = 0; $i < 100000; ++$i) {
+            $uniqueId = StringHelper::generateUniqueId();
+
+            $this->assertFalse(\in_array($uniqueId, $except), '唯一ID重复');
+            $except[] = $uniqueId;
+        }
+    }
+
+    /**
+     * 测试hideIdentity方法.
+     */
+    public function testHideIdentity()
+    {
+        $this->assertEquals('183****0000', StringHelper::hideIdentity('18300000000'), '测试失败');
+
+        $this->assertEquals('e***@abc.com', StringHelper::hideIdentity('e@abc.com'), '测试失败');
+
+        $this->assertEquals('ema***@abc.com', StringHelper::hideIdentity('email@abc.com'), '测试失败');
+    }
+
     protected function _before()
     {
     }
