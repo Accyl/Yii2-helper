@@ -17,21 +17,28 @@ class QueryHelper
      * 2. not between: Url xxx.xx/api/resource?id=!1@-@10 // to where ['not between', 'id', [1, 10]]
      * 3. in: Url xxx.xx/api/resource?id=1,2,3,4,5 // to where ['in', 'id', [1, 2, 3, 4, 5]
      * 4. not in: Url xxx.xx/api/resource?id=!1,2,3,4,5 //to where ['not in', 'id', [1, 2, 3, 4, 5]]
-     * 5. like: Url xxx.xx/api/resource?name=%%abc // to where ['like', 'name', '%abc%']
-     * 6. not like Url xxx.xx/api/resource?name=!%%abc // to where ['not like', 'name', '%abc%']
+     * 5. like: Url xxx.xx/api/resource?name=%%abc // to where ['like', 'name', 'abc']
+     * 6. not like Url xxx.xx/api/resource?name=!%%abc // to where ['not like', 'name', 'abc']
+     *
+     * 支持在关联关系中查询
+     * 7. relation: xxx.xx/api/resource?relation>id=123 // ['=', 'relation.id', 123]
      *
      * @param array $conditions
+     * @param bool  $allowRelation 是否允许在关联关系中查询
      *
      * @return array
      */
-    public static function parseQuerySearchCondition(array $conditions = null): array
+    public static function parseCondition(array $conditions = null, $allowRelation = true): array
     {
         $conditions = $conditions ?? \Yii::$app->request->get();
         unset($conditions['sort'], $conditions['page'], $conditions['size']);
 
         $result = ['and'];
         foreach ($conditions as $column => $condition) {
-            $column = strtr($column, ['>' => '.']);
+            if ($allowRelation) {
+                $column = strtr($column, ['>' => '.']);
+            }
+
             if (false !== strpos($condition, ',')) {
                 $values = explode(',', $condition);
 
@@ -90,7 +97,7 @@ class QueryHelper
      *
      * @return array
      */
-    public static function parseQueryOrderCondition(array $conditions = null, array $default = []): array
+    public static function parseOrder(array $conditions = null, array $default = []): array
     {
         $conditions = $conditions ?? \Yii::$app->request->get();
         $condition = explode(',', $conditions['sort']);
@@ -166,10 +173,10 @@ class QueryHelper
      *
      * @return array
      */
-    public static function information($total): array
+    public static function getInformation($total): array
     {
         $sort = [];
-        foreach (static::parseQueryOrderCondition() as $key => $value) {
+        foreach (static::parseOrder() as $key => $value) {
             $sort[] = [$key => SORT_DESC === $value ? 'desc' : 'asc'];
         }
 

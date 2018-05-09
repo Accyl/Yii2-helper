@@ -5,7 +5,7 @@ namespace Accyl\helpers\tests;
 use Accyl\helpers\ArrayHelper;
 
 /**
- * 数组小助手单元测试类.
+ * ArrayHelper单元测试类.
  *
  * @author Luna <Luna@cyl-mail.com>
  */
