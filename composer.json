@@ -6,7 +6,7 @@
     "extension",
     "helper"
   ],
-  "homepage": "https://github.com/Accyl/Yii2-helpers",
+  "homepage": "https://github.com/Luna-CY/Yii2-helpers",
   "type": "yii2-extension",
   "license": "BSD-3-Clause",
   "author": [
@@ -16,8 +16,8 @@
     }
   ],
   "support": {
-    "issues": "https://github.com/Accyl/Yii2-helpers/issues",
-    "source": "https://github.com/Accyl/Yii2-helpers"
+    "issues": "https://github.com/Luna-CY/Yii2-helpers/issues",
+    "source": "https://github.com/Luna-CY/Yii2-helpers"
   },
   "minimum-stability": "stable",
   "require": {
