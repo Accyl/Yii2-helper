@@ -82,7 +82,7 @@ class StringHelperTest extends \Codeception\Test\Unit
         for ($i = 0; $i < 100000; ++$i) {
             $uniqueId = StringHelper::generateUniqueId();
 
-//            $this->assertFalse(\in_array($uniqueId, $except), '唯一ID重复');
+            $this->assertFalse(\in_array($uniqueId, $except, true), '唯一ID重复');
             $except[] = $uniqueId;
         }
     }

@@ -24,22 +24,41 @@ class QueryHelper
      * 7. relation: xxx.xx/api/resource?relation>id=123 // ['=', 'relation.id', 123]
      *
      * @param array $conditions
-     * @param bool  $allowRelation 是否允许在关联关系中查询
+     * @param bool  $allowRelation  是否允许在关联关系中查询
+     * @param array $allowedColumns 允许进行查询的字段列表，默认允许所有
+     *                              该参数可以是被允许字段的列表，也可以是一个以被允许字段作为键的关联数组，键的值为被允许的方法的列表，如果值为null或一个空的列表则表示不允许任何方法
+     *                              e.g.:
+     *                              ['name', 'description', 'type'] // 列表表示列表内的字段允许任何方法筛选
+     *                              ['id' => null, 'name', 'description' => ['like'], 'type' => ['in', 'between'] // id不允许任何方法，name允许所有方法，description仅允许like或not like，type允许in, not in, between, not between
      *
      * @return array
      */
-    public static function parseCondition(array $conditions = null, $allowRelation = true): array
+    public static function parseCondition(array $conditions = null, array $allowedColumns = null, $allowRelation = true): array
     {
         $conditions = $conditions ?? \Yii::$app->request->get();
         unset($conditions['sort'], $conditions['page'], $conditions['size']);
 
         $result = ['and'];
         foreach ($conditions as $column => $condition) {
+            if ($allowedColumns && !\in_array($column, $allowedColumns, true) && !\array_key_exists($column, $allowedColumns)) {
+                continue;
+            }
+
             if ($allowRelation) {
                 $column = strtr($column, ['>' => '.']);
             }
 
+            if (false !== strpos($column, '>')) {
+                continue;
+            }
+
+            $scope = $allowedColumns && \array_key_exists($column, $allowedColumns) ? $allowedColumns[$column] : ['in', 'like', 'between'];
+
             if (false !== strpos($condition, ',')) {
+                if (!$scope || !\in_array('in', $scope, true)) {
+                    continue;
+                }
+
                 $values = explode(',', $condition);
 
                 $operator = 'in';
@@ -53,6 +72,10 @@ class QueryHelper
             }
 
             if (false !== strpos($condition, '@-@')) {
+                if (!$scope || !\in_array('between', $scope, true)) {
+                    continue;
+                }
+
                 $values = explode('@-@', $condition);
 
                 $operator = 'between';
@@ -66,6 +89,10 @@ class QueryHelper
             }
 
             if (false !== strpos($condition, '%%')) {
+                if (!$scope || !\in_array('like', $scope, true)) {
+                    continue;
+                }
+
                 $operator = 'like';
                 if ('!' === $condition[0]) {
                     $operator = 'not like';
@@ -92,32 +119,45 @@ class QueryHelper
      *
      * @example Url: xxx.xx/api/resource?sort=id,desc
      *
-     * @param array $conditions 可以将整个\Yii::$app->request->get获取到的数据传入进来，或者自行处理后的数据
-     * @param array $default
+     * @param array $conditions     可以将整个\Yii::$app->request->get获取到的数据传入进来，或者自行处理后的数据
+     * @param array $default        没有匹配或匹配失败时返回的默认排序
+     * @param array $allowedColumns 允许被设置的字段列表，默认为允许所有
      *
      * @return array
      */
-    public static function parseOrder(array $conditions = null, array $default = []): array
+    public static function parseOrder(array $conditions = null, array $default = ['id' => SORT_DESC], array $allowedColumns = null): array
     {
         $conditions = $conditions ?? \Yii::$app->request->get();
-        $condition = explode(',', $conditions['sort']);
-        if (empty($condition)) {
+        if (empty($conditions['sort']) || (null !== $allowedColumns && !$allowedColumns)) {
             return $default;
         }
 
-        $order = [];
-        $sort = $condition[1] ?? 'desc';
-        if (0 === strcmp('level', $condition[0])) {
-            $order['level'] = StringHelper::startsWith($sort, 'asc') ? SORT_ASC : SORT_DESC;
+        $orders = array_filter(explode(';', $conditions['sort']));
+
+        if (empty($orders)) {
+            return $default;
         }
 
-        if (0 === strcmp('time', $condition[0]) || 0 === strcmp('id', $condition[0])) {
-            $order['id'] = 0 === strcmp('asc', $sort) ? SORT_ASC : SORT_DESC;
-        } else {
-            $order['id'] = SORT_DESC;
+        $result = [];
+        foreach ($orders as $order) {
+            if (false === strpos($order, ',')) {
+                if (null === $allowedColumns || \in_array($order, $allowedColumns, true)) {
+                    $result[$order] = SORT_ASC;
+                }
+
+                continue;
+            }
+
+            list($column, $mode) = explode(',', $order);
+
+            if (null !== $allowedColumns && !\in_array($column, $allowedColumns, true)) {
+                continue;
+            }
+
+            $result[$column] = StringHelper::startsWith($mode, 'asc') ? SORT_ASC : SORT_DESC;
         }
 
-        return $order;
+        return $result;
     }
 
     /**
