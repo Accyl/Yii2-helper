@@ -1,6 +1,6 @@
 <?php
 
-namespace Accyl\helpers;
+namespace accyl\helpers;
 
 /**
  * 扩展StringHelper.

@@ -1,8 +1,8 @@
 <?php
 
-namespace Accyl\helpers\tests;
+namespace accyl\helpers\tests;
 
-use Accyl\helpers\QueryHelper;
+use accyl\helpers\QueryHelper;
 
 /**
  * QueryHelper单元测试.

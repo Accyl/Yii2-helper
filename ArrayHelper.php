@@ -1,6 +1,6 @@
 <?php
 
-namespace Accyl\helpers;
+namespace accyl\helpers;
 
 use yii\base\Arrayable;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Accyl\helpers;
+namespace accyl\helpers;
 
 /**
  * 用户解析请求参数的小助手.
