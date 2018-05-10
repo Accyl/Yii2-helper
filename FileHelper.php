@@ -39,16 +39,7 @@ class FileHelper extends \yii\helpers\FileHelper
     public static function getExtensionByMimeType(string $mimeType, string $magicFile = null): string
     {
         $extensions = static::getExtensionsByMimeType($mimeType, $magicFile);
-
-        if ('image/jpeg' === $mimeType || 'image/jpg' === $mimeType || 'image/jpe' === $mimeType) {
-            return 'jpg';
-        }
-
-        if (!empty($extensions)) {
-            return $extensions[0];
-        }
-
-        return '';
+        return array_shift($extensions) ?: '';
     }
 
     /**
