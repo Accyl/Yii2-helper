@@ -1,8 +1,8 @@
 <?php
 
-namespace accyl\helpers\tests;
+namespace lunacy\helpers\tests;
 
-use accyl\helpers\ArrayHelper;
+use lunacy\helpers\ArrayHelper;
 
 /**
  * ArrayHelper单元测试类.

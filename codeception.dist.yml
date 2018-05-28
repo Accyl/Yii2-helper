@@ -1,4 +1,4 @@
-namespace: Accyl\helpers\tests
+namespace: lunacy\helpers\tests
 
 suites:
     unit:

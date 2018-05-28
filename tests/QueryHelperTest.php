@@ -1,8 +1,8 @@
 <?php
 
-namespace accyl\helpers\tests;
+namespace lunacy\helpers\tests;
 
-use accyl\helpers\QueryHelper;
+use lunacy\helpers\QueryHelper;
 
 /**
  * QueryHelper单元测试.

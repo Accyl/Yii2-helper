@@ -1,6 +1,6 @@
 <?php
 
-namespace accyl\helpers;
+namespace lunacy\helpers;
 
 use yii\web\UploadedFile;
 

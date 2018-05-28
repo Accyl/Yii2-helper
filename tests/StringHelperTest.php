@@ -1,8 +1,8 @@
 <?php
 
-namespace accyl\helpers\tests;
+namespace lunacy\helpers\tests;
 
-use accyl\helpers\StringHelper;
+use lunacy\helpers\StringHelper;
 
 /**
  * StringHelper元测试类.

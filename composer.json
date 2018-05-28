@@ -1,5 +1,5 @@
 {
-  "name": "accyl/yii2-helpers",
+  "name": "lunacy/yii2-helpers",
   "description": "扩展了yii2框架本身的一些helper，以及自己添加的一些helpers",
   "keywords": [
     "yii2",
@@ -25,7 +25,7 @@
   },
   "autoload": {
     "psr-4": {
-      "accyl\\helpers\\": ""
+      "lunacy\\helpers\\": ""
     }
   }
 }

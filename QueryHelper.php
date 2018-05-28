@@ -1,6 +1,6 @@
 <?php
 
-namespace accyl\helpers;
+namespace lunacy\helpers;
 
 /**
  * 用户解析请求参数的小助手.
