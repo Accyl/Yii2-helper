@@ -14,7 +14,7 @@ class FileHelper extends \yii\helpers\FileHelper
     /**
      * @var array
      */
-    const IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/jpg', 'image/jpe', 'image/gif'];
+    protected const IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/jpg', 'image/jpe', 'image/gif'];
 
     /**
      * 获取文件的时间信息.
@@ -39,6 +39,7 @@ class FileHelper extends \yii\helpers\FileHelper
     public static function getExtensionByMimeType(string $mimeType, string $magicFile = null): string
     {
         $extensions = static::getExtensionsByMimeType($mimeType, $magicFile);
+
         return array_shift($extensions) ?: '';
     }
 
@@ -111,7 +112,7 @@ class FileHelper extends \yii\helpers\FileHelper
      *
      * @return array
      */
-    public static function saveUploadFilesByName(string $name, string $savePath, $onlyImage = false): array
+    public static function saveUploadFilesByName(string $name, string $savePath, bool $onlyImage = false): array
     {
         $result = [];
 
@@ -223,7 +224,7 @@ class FileHelper extends \yii\helpers\FileHelper
      *
      * @return string
      */
-    public static function getImageUrl(string $image, bool $abs = true, $host = ''): string
+    public static function getImageUrl(string $image, bool $abs = true, string $host = ''): string
     {
         if ($abs && $host) {
             return 0 === strncmp($image, 'https://', 8) || 0 === strncmp($image, 'http://', 7) ? $image : $host.$image;

@@ -25,7 +25,7 @@ class QueryHelper
      *
      * @param array $conditions
      * @param bool  $allowRelation  是否允许在关联关系中查询
-     * @param array $allowedColumns 允许进行查询的字段列表，默认允许所有
+     * @param array $allowedColumns 允许进行查询的字段列表，默认不允许
      *                              该参数可以是被允许字段的列表，也可以是一个以被允许字段作为键的关联数组，键的值为被允许的方法的列表，如果值为null或一个空的列表则表示不允许任何方法
      *                              e.g.:
      *                              ['name', 'description', 'type'] // 列表表示列表内的字段允许任何方法筛选
@@ -33,7 +33,7 @@ class QueryHelper
      *
      * @return array
      */
-    public static function parseCondition(array $conditions = null, array $allowedColumns = null, $allowRelation = true): array
+    public static function parseCondition(array $conditions = null, array $allowedColumns = null, bool $allowRelation = false): array
     {
         $conditions = $conditions ?? \Yii::$app->request->get();
         unset($conditions['sort'], $conditions['page'], $conditions['size']);
@@ -125,14 +125,16 @@ class QueryHelper
      *
      * @return array
      */
-    public static function parseOrder(array $conditions = null, array $default = ['id' => SORT_DESC], array $allowedColumns = null): array
+    public static function parseOrder(array $conditions = null, array $default = null, array $allowedColumns = null): array
     {
         $conditions = $conditions ?? \Yii::$app->request->get();
+        $default = $default ?: ['id' => SORT_DESC];
+
         if (empty($conditions['sort']) || (null !== $allowedColumns && !$allowedColumns)) {
             return $default;
         }
 
-        $orders = array_filter(explode(';', $conditions['sort']));
+        $orders = array_filter(explode(',', $conditions['sort']));
 
         if (empty($orders)) {
             return $default;
@@ -140,21 +142,15 @@ class QueryHelper
 
         $result = [];
         foreach ($orders as $order) {
-            if (false === strpos($order, ',')) {
-                if (null === $allowedColumns || \in_array($order, $allowedColumns, true)) {
-                    $result[$order] = SORT_ASC;
-                }
-
-                continue;
+            $mode = SORT_ASC;
+            if ('+' === $order[0] || '-' === $order[0]) {
+                $mode = '-' === $order[0] ? SORT_DESC : SORT_ASC;
+                $order = substr($order, 1);
             }
 
-            list($column, $mode) = explode(',', $order);
-
-            if (null !== $allowedColumns && !\in_array($column, $allowedColumns, true)) {
-                continue;
+            if (null === $allowedColumns || \in_array($order, $allowedColumns, true)) {
+                $result[$order] = $mode;
             }
-
-            $result[$column] = StringHelper::startsWith($mode, 'asc') ? SORT_ASC : SORT_DESC;
         }
 
         return $result;
@@ -209,11 +205,11 @@ class QueryHelper
     /**
      * 获取列表页的information.
      *
-     * @param $total
+     * @param int $total
      *
      * @return array
      */
-    public static function getInformation($total): array
+    public static function getInformation(int $total): array
     {
         $sort = [];
         foreach (static::parseOrder() as $key => $value) {
